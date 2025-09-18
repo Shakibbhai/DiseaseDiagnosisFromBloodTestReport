@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration</title>
+
+  <!-- Importing Google Fonts - Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      background: linear-gradient(135deg, #71b7e6, #9b59b6);
+    }
+
+    .container {
+      max-width: 700px;
+      width: 100%;
+      background-color: #fff;
+      padding: 25px 30px;
+      border-radius: 5px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+
+    .container .title {
+      font-size: 25px;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .container .title::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      height: 3px;
+      width: 50px;
+      border-radius: 5px;
+      background: linear-gradient(135deg, #71b7e6, #9b59b6);
+    }
+
+    /* Input wrapper */
+    .form-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .input-box {
+      flex: 1 1 calc(50% - 10px);
+      min-width: 200px;
+    }
+
+    .input-box.full-width {
+      flex: 1 1 100%;
+    }
+
+    form .input-box span.details {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .input-box input,
+    .input-box select {
+      height: 45px;
+      width: 100%;
+      outline: none;
+      font-size: 16px;
+      border-radius: 5px;
+      padding-left: 15px;
+      border: 1px solid #ccc;
+      border-bottom-width: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .input-box input:focus,
+    .input-box input:valid {
+      border-color: #9b59b6;
+    }
+
+    /* Gender selection */
+    .gender-details {
+      width: 100%;
+      margin: 20px 0;
+    }
+
+    .gender-details .gender-title {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .category {
+      display: flex;
+      justify-content: space-between;
+      margin: 14px 0;
+      flex-wrap: wrap;
+    }
+
+    .category label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+      padding-left: 35px;
+      user-select: none;
+      font-size: 16px;
+      width: 30%;
+    }
+
+    /* Hide default radio */
+    .category label input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* Custom radio button */
+    .checkmark {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 20px;
+      width: 20px;
+      background-color: #d9d9d9;
+      border-radius: 50%;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Checked state */
+    .category label input:checked ~ .checkmark {
+      background: linear-gradient(135deg, #71b7e6, #9b59b6);
+    }
+
+    /* Dot inside radio */
+    .checkmark::after {
+      content: "";
+      position: absolute;
+      display: none;
+      top: 6px;
+      left: 6px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: white;
+    }
+
+    .category label input:checked ~ .checkmark::after {
+      display: block;
+    }
+
+    /* Submit button */
+    .button {
+      height: 45px;
+      margin: 35px 0;
+    }
+
+    .button input[type="submit"] {
+      height: 100%;
+      width: 100%;
+      border-radius: 5px;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #71b7e6, #9b59b6);
+    }
+
+    .button input[type="submit"]:hover {
+      background: linear-gradient(-135deg, #71b7e6, #9b59b6);
+    }
+
+    /* Login link */
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .login-link a {
+      color: #9b59b6;
+      text-decoration: none;
+      font-weight: 500;
+      margin-left: 5px;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .input-box {
+        flex: 1 1 100%;
+      }
+
+      .category label {
+        width: 100%;
+        padding-left: 35px;
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title">Registration</div>
+    <div class="content">
+      <form method="post" action="/register" onsubmit="return validateForm()">
+        <div class="form-grid">
+          <div class="input-box">
+            <span class="details">Full Name</span>
+            <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+          </div>
+
+          <div class="input-box">
+            <span class="details">Username</span>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+          </div>
+
+          <div class="input-box">
+            <span class="details">Email</span>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+          </div>
+
+          <div class="input-box">
+            <span class="details">Phone Number</span>
+            <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required>
+          </div>
+
+          <div class="input-box">
+            <span class="details">Password</span>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required minlength="8">
+          </div>
+
+          <div class="input-box">
+            <span class="details">Confirm Password</span>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required minlength="8">
+          </div>
+
+          <div class="input-box">
+            <span class="details">Age</span>
+            <input type="number" id="age" name="age" placeholder="Enter your age" required min="1">
+          </div>
+        </div>
+
+        <!-- Gender -->
+        <div class="gender-details">
+          <span class="gender-title">Gender</span>
+          <div class="category">
+            <label>
+              <input type="radio" name="gender" value="male" required>
+              <span class="checkmark"></span> Male
+            </label>
+            <label>
+              <input type="radio" name="gender" value="female">
+              <span class="checkmark"></span> Female
+            </label>
+            <label>
+              <input type="radio" name="gender" value="prefer_not_to_say">
+              <span class="checkmark"></span> Prefer not to say
+            </label>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="button">
+          <input type="submit" value="Register">
+        </div>
+
+        <!-- Login link -->
+        <div class="login-link">
+          Already have an account? <a href="/login">Login</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Validation Script -->
+  <script>
+    function validateForm() {
+      var password = document.getElementById("password").value;
+      var confirmPassword = document.getElementById("confirm_password").value;
+
+      if (password !== confirmPassword) {
+        alert("Password and confirm password must match.");
+        return false;
+      }
+
+      // Validate phone number
+      var phone = document.getElementById("phone").value;
+      var phonePattern = /^[0-9]{10,15}$/;
+      if (!phonePattern.test(phone)) {
+        alert("Please enter a valid phone number (10-15 digits).");
+        return false;
+      }
+
+      return true;
+    }
+  </script>
+</body>
+</html>

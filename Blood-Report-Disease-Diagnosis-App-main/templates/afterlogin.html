@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Dashboard - Blood Disease Detection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            /* Light Mode Variables */
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --success-color: #4ade80;
+            --warning-color: #fbbf24;
+            --error-color: #f87171;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            --gradient-accent: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+        }
+
+        /* Dark Mode Variables */
+        .dark-mode {
+            --primary-color: #93c5fd;
+            --secondary-color: #a78bfa;
+            --accent-color: #f0abfc;
+            --success-color: #6ee7b7;
+            --warning-color: #fcd34d;
+            --error-color: #f87171;
+            --text-primary: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --bg-primary: #1f2937;
+            --bg-secondary: #374151;
+            --bg-card: #1f2937;
+            --border-color: #4b5563;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-primary);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .theme-toggle i {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-color);
+        }
+
+        .theme-toggle:hover i {
+            color: white;
+            transform: rotate(180deg);
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .upload-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-container {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background: var(--bg-secondary);
+        }
+
+        .upload-container:hover {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            transform: translateY(-2px);
+        }
+
+        .upload-container.dragover {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+            transform: scale(1.02);
+            animation: pulse 1s infinite;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .upload-container:hover .upload-icon {
+            transform: scale(1.1);
+        }
+
+        .upload-text {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtext {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        /* Form Section */
+        .form-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 0.5s ease 0.2s forwards;
+        }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-accent);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            height: 48px;
+            padding: 0 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--bg-primary);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: scale(1.01);
+        }
+
+        .input-group input:valid {
+            border-color: var(--success-color);
+            background: rgba(74, 222, 128, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            min-width: 140px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            transform: scale(1.05);
+        }
+
+        .btn-ai {
+            background: var(--gradient-accent);
+            color: white;
+        }
+
+        .btn-ai:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Right Panel */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .quick-actions {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            animation: fadeIn 0.5s ease 0.4s forwards;
+        }
+
+        .quick-action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .quick-action-item {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .quick-action-item:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .quick-action-item:hover .quick-action-icon,
+        .quick-action-item:hover .quick-action-text {
+            color: white;
+        }
+
+        .quick-action-item::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .quick-action-item:hover::after {
+            opacity: 1;
+        }
+
+        .quick-action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .quick-action-item:hover .quick-action-icon {
+            transform: scale(1.1);
+        }
+
+        .quick-action-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .stats-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            animation: fadeIn 0.5s ease 0.6s forwards;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            background: var(--primary-color);
+        }
+
+        .stat-card:hover .stat-number,
+        .stat-card:hover .stat-label {
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .status-success {
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+        }
+
+        .status-error {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: translateY(20px); opacity: 0; }
+            60% { transform: translateY(-5px); opacity: 1; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .quick-action-item {
+            animation: bounceIn 0.5s ease forwards;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .right-panel {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+            .header-content {
+                padding: 1rem;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .quick-action-grid,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                CBC Analyzer
+            </div>
+            <div class="user-menu">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 500;">Welcome back!</div>
+                    <div style="font-size: 0.875rem; color: var(--text-secondary);">Ready to analyze</div>
+                </div>
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-sun"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="main-container">
+        <div class="left-panel">
+            <div class="upload-section">
+                <h2 class="section-title">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    Upload CBC Report
+                </h2>
+                <div class="upload-container" id="drop-zone" onclick="document.getElementById('file-input').click();">
+                    <i class="fas fa-file-medical upload-icon"></i>
+                    <div class="upload-text">Drag & drop your CBC report image here</div>
+                    <div class="upload-subtext">or click to browse (PNG, JPG, JPEG)</div>
+                    <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+                </div>
+                <div class="status-message" id="upload-status"></div>
+            </div>
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-vials"></i>
+                    Manual Input
+                </h2>
+                <form id="cbc-form" method="POST" onsubmit="return validateForm()">
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="WBC">WBC Count (×10³/μL)</label>
+                            <input type="number" id="WBC" name="WBC" step="0.01" placeholder="4.0 - 11.0" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="RBC">RBC Count (×10⁶/μL)</label>
+                            <input type="number" id="RBC" name="RBC" step="0.01" placeholder="4.2 - 5.9" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="HGB">Hemoglobin (g/dL)</label>
+                            <input type="number" id="HGB" name="HGB" step="0.01" placeholder="12.0 - 18.0" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="PLT">Platelet Count (×10³/μL)</label>
+                            <input type="number" id="PLT" name="PLT" step="1" placeholder="150 - 450" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="NEUT">Neutrophils (%)</label>
+                            <input type="number" id="NEUT" name="NEUT" step="0.1" placeholder="40 - 70" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="LYMPH">Lymphocytes (%)</label>
+                            <input type="number" id="LYMPH" name="LYMPH" step="0.1" placeholder="20 - 45" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="MONO">Monocytes (%)</label>
+                            <input type="number" id="MONO" name="MONO" step="0.1" placeholder="2 - 10" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="EO">Eosinophils (%)</label>
+                            <input type="number" id="EO" name="EO" step="0.1" placeholder="1 - 4" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="BASO">Basophils (%)</label>
+                            <input type="number" id="BASO" name="BASO" step="0.1" placeholder="0.5 - 1" required>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-primary" id="analyze-btn">
+                            <i class="fas fa-search"></i>
+                            <span>Analyze Results</span>
+                            <div class="loading-spinner" id="analyze-spinner"></div>
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="saveData()" id="save-btn">
+                            <i class="fas fa-save"></i>
+                            <span>Save Data</span>
+                            <div class="loading-spinner" id="save-spinner"></div>
+                        </button>
+                        <button type="button" class="btn btn-ai" onclick="getGeminiAnalysis()" id="ai-btn">
+                            <i class="fas fa-brain"></i>
+                            <span>AI Analysis</span>
+                            <div class="loading-spinner" id="ai-spinner"></div>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="quick-actions">
+                <h3 class="section-title">
+                    <i class="fas fa-bolt"></i>
+                    Quick Actions
+                </h3>
+                <div class="quick-action-grid">
+                    <div class="quick-action-item" onclick="window.location.href='/view_history'" data-tooltip="View past test results">
+                        <i class="fas fa-history quick-action-icon"></i>
+                        <div class="quick-action-text">View History</div>
+                    </div>
+                    <div class="quick-action-item" onclick="clearForm()" data-tooltip="Reset all input fields">
+                        <i class="fas fa-broom quick-action-icon"></i>
+                        <div class="quick-action-text">Clear Form</div>
+                    </div>
+                    <div class="quick-action-item" onclick="window.print()" data-tooltip="Print the current report">
+                        <i class="fas fa-print quick-action-icon"></i>
+                        <div class="quick-action-text">Print Report</div>
+                    </div>
+                    <div class="quick-action-item" onclick="window.location.href='/logout'" data-tooltip="Sign out of your account">
+                        <i class="fas fa-sign-out-alt quick-action-icon"></i>
+                        <div class="quick-action-text">Logout</div>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-section">
+                <h3 class="section-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Your Statistics
+                </h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="total-tests">--</span>
+                        <div class="stat-label">Total Tests</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="this-month">--</span>
+                        <div class="stat-label">This Month</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="normal-results">--</span>
+                        <div class="stat-label">Normal Results</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="last-test">--</span>
+                        <div class="stat-label">Days Since Last</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserStats();
+            addInputValidation();
+            loadTheme();
+        });
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.querySelector('.theme-toggle i');
+            body.classList.toggle('light-mode');
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            themeIcon.className = isDarkMode ? 'fas fa-moon' : 'fas fa-sun';
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.classList.add(`${savedTheme}-mode`);
+            const themeIcon = document.querySelector('.theme-toggle i');
+            themeIcon.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 10 * 1024 * 1024) {
+                    showStatus('File too large. Please select a file under 10MB.', 'error');
+                    return;
+                }
+                uploadFile(file);
+            }
+        }
+
+        const dropZone = document.getElementById('drop-zone');
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            if (!dropZone.contains(e.relatedTarget)) {
+                dropZone.classList.remove('dragover');
+            }
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    uploadFile(file);
+                } else {
+                    showStatus('Please upload an image file (PNG, JPG, JPEG)', 'error');
+                }
+            }
+        });
+
+        function uploadFile(file) {
+            showStatus('Uploading and processing image...', 'info');
+            const formData = new FormData();
+            formData.append('file', file);
+            fetch('/upload_cbc', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Object.keys(data.values).forEach(field => {
+                        const element = document.getElementById(field);
+                        if (element) {
+                            element.value = data.values[field];
+                            element.style.backgroundColor = 'rgba(74, 222, 128, 0.1)';
+                            setTimeout(() => {
+                                element.style.backgroundColor = '';
+                            }, 2000);
+                        }
+                    });
+                    showStatus('CBC values extracted successfully! Review and submit.', 'success');
+                    document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    showStatus(`Error: ${data.error}`, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Upload error:', error);
+                showStatus('Error uploading file. Please try again or enter values manually.', 'error');
+            });
+        }
+
+        function validateForm() {
+            const fields = ['WBC', 'RBC', 'HGB', 'PLT', 'NEUT', 'LYMPH', 'MONO', 'EO', 'BASO'];
+            let isValid = true;
+            for (let field of fields) {
+                const element = document.getElementById(field);
+                const value = parseFloat(element.value);
+                if (isNaN(value) || element.value.trim() === '') {
+                    element.style.borderColor = 'var(--error-color)';
+                    element.style.backgroundColor = 'rgba(248, 113, 113, 0.1)';
+                    isValid = false;
+                } else {
+                    element.style.borderColor = 'var(--success-color)';
+                    element.style.backgroundColor = 'rgba(74, 222, 128, 0.1)';
+                }
+            }
+            if (!isValid) {
+                showStatus('Please fill all fields with valid numbers', 'error');
+                return false;
+            }
+            showButtonLoading('analyze-btn', 'analyze-spinner');
+            return true;
+        }
+
+        function saveData() {
+            if (!validateForm()) return;
+            showButtonLoading('save-btn', 'save-spinner');
+            const formData = new FormData(document.getElementById("cbc-form"));
+            fetch('/save_data', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                hideButtonLoading('save-btn', 'save-spinner');
+                if (response.ok) {
+                    showStatus('Data saved successfully!', 'success');
+                    loadUserStats();
+                } else {
+                    showStatus('Failed to save data. Please try again.', 'error');
+                }
+            })
+            .catch(error => {
+                hideButtonLoading('save-btn', 'save-spinner');
+                showStatus('Error saving data. Please try again.', 'error');
+            });
+        }
+
+        function getGeminiAnalysis() {
+            if (!validateForm()) return;
+            showButtonLoading('ai-btn', 'ai-spinner');
+            showStatus('Preparing AI analysis...', 'info');
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/gemini_analysis';
+            const fields = ['WBC', 'RBC', 'HGB', 'PLT', 'NEUT', 'LYMPH', 'MONO', 'EO', 'BASO'];
+            fields.forEach(field => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = field;
+                input.value = document.getElementById(field).value;
+                form.appendChild(input);
+            });
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('upload-status');
+            statusEl.textContent = message;
+            statusEl.className = `status-message status-${type}`;
+            statusEl.style.display = 'block';
+            statusEl.style.opacity = '1';
+            if (type === 'success' || type === 'info') {
+                setTimeout(() => {
+                    statusEl.style.opacity = '0';
+                    setTimeout(() => {
+                        statusEl.style.display = 'none';
+                    }, 300);
+                }, 5000);
+            }
+        }
+
+        function showButtonLoading(buttonId, spinnerId) {
+            const button = document.getElementById(buttonId);
+            const spinner = document.getElementById(spinnerId);
+            const span = button.querySelector('span');
+            button.disabled = true;
+            spinner.style.display = 'block';
+            span.textContent = 'Processing...';
+        }
+
+        function hideButtonLoading(buttonId, spinnerId) {
+            const button = document.getElementById(buttonId);
+            const spinner = document.getElementById(spinnerId);
+            const span = button.querySelector('span');
+            button.disabled = false;
+            spinner.style.display = 'none';
+            if (buttonId === 'save-btn') span.textContent = 'Save Data';
+            else if (buttonId === 'ai-btn') span.textContent = 'AI Analysis';
+            else span.textContent = 'Analyze Results';
+        }
+
+        function clearForm() {
+            const fields = ['WBC', 'RBC', 'HGB', 'PLT', 'NEUT', 'LYMPH', 'MONO', 'EO', 'BASO'];
+            fields.forEach(field => {
+                const element = document.getElementById(field);
+                element.value = '';
+                element.style.borderColor = '';
+                element.style.backgroundColor = '';
+            });
+            showStatus('Form cleared successfully', 'success');
+        }
+
+        function addInputValidation() {
+            const inputs = document.querySelectorAll('input[type="number"]');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const value = parseFloat(this.value);
+                    if (!isNaN(value) && this.value.trim() !== '') {
+                        this.style.borderColor = 'var(--success-color)';
+                        this.style.backgroundColor = 'rgba(74, 222, 128, 0.1)';
+                    } else {
+                        this.style.borderColor = 'var(--error-color)';
+                        this.style.backgroundColor = 'rgba(248, 113, 113, 0.1)';
+                    }
+                });
+            });
+        }
+
+        function loadUserStats() {
+            document.getElementById('total-tests').textContent = "25";
+            document.getElementById('this-month').textContent = "3";
+            document.getElementById('normal-results').textContent = "18";
+            document.getElementById('last-test').textContent = "5";
+        }
+    </script>
+</body>
+</html>

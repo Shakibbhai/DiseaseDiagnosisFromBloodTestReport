@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Analysis - CBC Results</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .cbc-values {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .cbc-values h2 {
+            color: #4158d0;
+            margin-bottom: 15px;
+        }
+
+        .cbc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .cbc-item {
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .cbc-item strong {
+            color: #666;
+        }
+
+        .analysis {
+            margin-top: 30px;
+        }
+
+        .analysis h2 {
+            color: #4158d0;
+            margin-bottom: 15px;
+        }
+
+        .analysis-content {
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .analysis-content p {
+            margin-bottom: 15px;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Gemini AI Analysis</h1>
+            <p>Advanced insights about your CBC results</p>
+        </div>
+
+        <div class="cbc-values">
+            <h2>Your CBC Values</h2>
+            <div class="cbc-grid">
+                <div class="cbc-item">
+                    <strong>WBC:</strong> {{ wbc }}
+                </div>
+                <div class="cbc-item">
+                    <strong>RBC:</strong> {{ rbc }}
+                </div>
+                <div class="cbc-item">
+                    <strong>Hemoglobin:</strong> {{ hgb }}
+                </div>
+                <div class="cbc-item">
+                    <strong>Platelets:</strong> {{ plt }}
+                </div>
+                <div class="cbc-item">
+                    <strong>Neutrophils:</strong> {{ neut }}
+                </div>
+                <div class="cbc-item">
+                    <strong>Lymphocytes:</strong> {{ lymph }}
+                </div>
+                <div class="cbc-item">
+                    <strong>Monocytes:</strong> {{ mono }}
+                </div>
+                <div class="cbc-item">
+                    <strong>Eosinophils:</strong> {{ eo }}
+                </div>
+                <div class="cbc-item">
+                    <strong>Basophils:</strong> {{ baso }}
+                </div>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <h2>AI Analysis</h2>
+            <div class="analysis-content">
+                {{ gemini_response|safe }}
+            </div>
+        </div>
+
+        <a href="{{ url_for('afterlogin') }}" class="back-button">Back to Dashboard</a>
+    </div>
+</body>
+</html>
